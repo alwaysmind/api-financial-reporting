@@ -3,8 +3,30 @@ const { validationResult } = require('express-validator')
 
 exports.getAllTransaction = async (req, res) => {
   try {
-    const transactions = await Transaction.find()
-      .populate('user')
+    let whereCondition = { user: req.user.user_id }
+    let body = req.body
+
+    if (body.monthYear) {
+      whereCondition.date = {
+        $gte: new Date(body.monthYear + '-01'),
+        $lte: new Date(body.monthYear + '-31'),
+      }
+    } else if (body.startDate && body.endDate) {
+      whereCondition.date = {
+        $gte: new Date(body.startDate),
+        $lte: new Date(body.endDate),
+      }
+    } else if (body.startDate) {
+      whereCondition.date = {
+        $gte: new Date(body.startDate),
+      }
+    } else if (body.endDate) {
+      whereCondition.date = {
+        $lte: new Date(body.endDate),
+      }
+    }
+
+    const transactions = await Transaction.find(whereCondition)
       .populate('category')
       .exec()
 
@@ -46,12 +68,10 @@ exports.putUpdateTransaction = async (req, res) => {
   try {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
-      return res
-        .status(400)
-        .json({
-          message: 'Failed to update transaction',
-          error: errors.array(),
-        })
+      return res.status(400).json({
+        message: 'Failed to update transaction',
+        error: errors.array(),
+      })
     }
 
     const transaction = await Transaction.findByIdAndUpdate(
@@ -69,7 +89,9 @@ exports.putUpdateTransaction = async (req, res) => {
 
 exports.deleteTransaction = async (req, res) => {
   try {
-    const transaction = await Transaction.findByIdAndRemove(req.params.id).exec()
+    const transaction = await Transaction.findByIdAndRemove(
+      req.params.id
+    ).exec()
 
     res.json({ message: 'transaction delete successfully', data: transaction })
   } catch (error) {

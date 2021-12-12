@@ -19,7 +19,7 @@ app.use(express.json({ extended: false }))
 
 // ROUTES
 // -- Test Route
-app.get('/', authMiddleware, (req, res) => res.send('Server up and running'))
+app.get('/', (req, res) => res.send('Server up and running'))
 
 // -- Authentication Route
 app.use('/api/v1/auth', AuthRoute)

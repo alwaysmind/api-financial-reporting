@@ -3,7 +3,7 @@ const { validationResult } = require('express-validator')
 
 exports.getAllCategory = async (req, res) => {
   try {
-    const categories = await Category.find({ $or: [ {user: req.user.user_id}, {user: []} ] }).exec()
+    const categories = await Category.find({ user: req.user.user_id }).exec()
 
     res
       .status(200)

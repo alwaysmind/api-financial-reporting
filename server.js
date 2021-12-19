@@ -1,15 +1,13 @@
 require('dotenv').config()
 const express = require('express')
-var cors = require('cors')
+const cors = require('cors')
 const connectDB = require('./config/db')
+const morgan = require('morgan')
 
 // Middleware
 const authMiddleware = require('./middleware/auth')
 
 const app = express()
-
-// enable cors
-app.use(cors())
 
 // routes
 const AuthRoute = require('./routers/AuthRoute')
@@ -22,6 +20,12 @@ connectDB()
 
 // initialize middleware
 app.use(express.json({ extended: false }))
+
+// enable cors
+app.use(cors())
+
+// morgan = request logger
+app.use(morgan('combined'))
 
 // ROUTES
 // -- Test Route

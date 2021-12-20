@@ -1,5 +1,7 @@
-const Category = require('../models/Category')
 const { validationResult } = require('express-validator')
+const Category = require('../models/Category')
+const Transaction = require('../models/Transaction')
+const Budget = require('../models/Budget')
 
 exports.getAllCategory = async (req, res) => {
   try {
@@ -61,6 +63,8 @@ exports.putUpdateCategory = async (req, res) => {
 
 exports.deleteCategory = async (req, res) => {
   try {
+    await Transaction.deleteMany({ category: req.params.id });
+    await Budget.deleteMany({ category: req.params.id });
     const category = await Category.findByIdAndRemove(req.params.id).exec()
 
     res.json({ message: 'category delete successfully', data: category })

@@ -4,25 +4,25 @@ const { validationResult } = require('express-validator')
 exports.getAllTransaction = async (req, res) => {
   try {
     let whereCondition = { user: req.user.user_id }
-    let body = req.body
+    let params = req.params
 
-    if (body.monthYear) {
+    if (params.monthYear) {
       whereCondition.date = {
-        $gte: new Date(body.monthYear + '-01'),
-        $lte: new Date(body.monthYear + '-31'),
+        $gte: new Date(params.monthYear + '-01'),
+        $lte: new Date(params.monthYear + '-31'),
       }
-    } else if (body.startDate && body.endDate) {
+    } else if (params.startDate && params.endDate) {
       whereCondition.date = {
-        $gte: new Date(body.startDate),
-        $lte: new Date(body.endDate),
+        $gte: new Date(params.startDate),
+        $lte: new Date(params.endDate),
       }
-    } else if (body.startDate) {
+    } else if (params.startDate) {
       whereCondition.date = {
-        $gte: new Date(body.startDate),
+        $gte: new Date(params.startDate),
       }
-    } else if (body.endDate) {
+    } else if (params.endDate) {
       whereCondition.date = {
-        $lte: new Date(body.endDate),
+        $lte: new Date(params.endDate),
       }
     }
 
